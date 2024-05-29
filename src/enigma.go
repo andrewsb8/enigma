@@ -5,7 +5,7 @@ import (
   "fmt"
   "flag"
 
-  p "enigma/play"
+  p "enigma/src/play"
 )
 
 func usage() {
