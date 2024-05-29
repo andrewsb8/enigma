@@ -4,6 +4,8 @@ import (
   "os"
   "fmt"
   "flag"
+
+  p "enigma/play"
 )
 
 func usage() {
@@ -14,6 +16,7 @@ func usage() {
 
 var (
   play = flag.Bool("p", false, "Flag to tell enigma to play a game.")
+  input_map = flag.String("im", "", "Input file with map information")
 )
 
 func main() {
@@ -21,7 +24,7 @@ func main() {
   flag.Parse()
 
   if *play {
-    fmt.Printf("cool\n")
+    p.Play()
   } else {
     usage()
   }
