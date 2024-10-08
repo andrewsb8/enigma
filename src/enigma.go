@@ -1,31 +1,32 @@
 package main
 
 import (
-  "os"
-  "fmt"
-  "flag"
+	"flag"
+	"fmt"
+	"os"
 
-  p "enigma/src/play"
+	p "enigma/src/play"
 )
 
 func usage() {
-  fmt.Fprintf(os.Stderr, "usage: enigma [options] [values]\n")
-  flag.PrintDefaults()
-  os.Exit(0)
+	fmt.Fprintf(os.Stderr, "usage: enigma [options] [values]\n")
+	flag.PrintDefaults()
+	os.Exit(0)
 }
 
 var (
-  play = flag.Bool("p", false, "Flag to tell enigma to play a game.")
-  input_map = flag.String("im", "", "Input file with map information")
+	play        = flag.Bool("p", false, "Flag to tell enigma to play a game.")
+	map_file    = flag.String("mf", "", "Input file with map state information")
+	action_file = flag.String("af", "", "Input file with action information")
 )
 
 func main() {
-  flag.Usage = usage
-  flag.Parse()
+	flag.Usage = usage
+	flag.Parse()
 
-  if *play {
-    p.Play()
-  } else {
-    usage()
-  }
+	if *play {
+		p.Play()
+	} else {
+		usage()
+	}
 }
