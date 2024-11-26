@@ -25,7 +25,7 @@ func main() {
 	flag.Parse()
 
 	if *play {
-		p.Play()
+		p.Play(*map_file)
 	} else {
 		usage()
 	}

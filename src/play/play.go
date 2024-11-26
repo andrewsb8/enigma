@@ -1,9 +1,9 @@
 package play
 
 import (
-  "fmt"
+	"enigma/src/awio"
 )
 
-func Play() {
-  fmt.Printf("cool\n")
+func Play(map_file string) {
+	awio.ReadMap(map_file)
 }
