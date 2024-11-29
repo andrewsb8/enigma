@@ -66,7 +66,9 @@ func ParseMap(game Game) {
 	// AWBWGame
 	// - Game Information - ends at buildings below
 	// - Buildings - }}s:9:"buildings"
+	//   - contains entries of awbwBuilding
 	// - units - }}s:5:"units
+	//   - contains entries of awbwUnit
 	entries := strings.Split(game.Awmap.Map_state[index:len(game.Awmap.Map_state)-1], ";")
 	for i := 0; i < len(entries); i++ {
 		fmt.Printf("%s\n", entries[i])
