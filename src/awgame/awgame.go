@@ -64,13 +64,15 @@ func ParseMap(game Game) {
 	//
 	// A line in the map file is then nested
 	// AWBWGame
-	// - Game Information
-	// - Buildings
-	// - units
+	// - Game Information - ends at buildings below
+	// - Buildings - }}s:9:"buildings"
+	// - units - }}s:5:"units
 	entries := strings.Split(game.Awmap.Map_state[index:len(game.Awmap.Map_state)-1], ";")
 	for i := 0; i < len(entries); i++ {
 		fmt.Printf("%s\n", entries[i])
-		if len(entries[i]) > 6 && entries[i][0:7] == "s:12:" {
+		vals := strings.Split(entries[i], ":")
+		//fmt.Printf("%s %s\n", vals, vals[len(vals)-1])
+		if vals[len(vals)-1] == "\"buildings\"" {
 			break
 		}
 	}
