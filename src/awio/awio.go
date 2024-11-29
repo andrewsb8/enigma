@@ -1,19 +1,23 @@
 package awio
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"strings"
 )
 
-func ReadMap(map_file string) {
+func GetMapState(map_file string) string {
+	/*
+	 Reads map file from AWBW and returns the final line
+	 of data as a string to be parsed.
+	*/
 	data, err := os.ReadFile(map_file)
 	if err != nil {
-		fmt.Printf("Error reading map file: %s\n", err)
+		log.Fatal(err)
 	} else {
 		lines := strings.Split(string(data), "\n")
-		//fmt.Println(lines[0])
-		split_by_curly := strings.Split(lines[1], "}")
-		fmt.Println(split_by_curly[1])
+		//-2 because these files have an empty line at the end
+		return lines[len(lines)-2]
 	}
+	return "" //would like to remove this
 }
