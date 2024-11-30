@@ -2,6 +2,7 @@ package awgame
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -42,55 +43,72 @@ type Map struct {
 	Map_height  int
 	Num_players int
 	Has_hq      bool
-	Weather     string
 	Tiles       []*Tile
 }
 
 type Game struct {
-	Awmap   Map
-	Players []*Player
+	Awmap          Map
+	Players        []*Player
+	Day            int
+	Fog            bool
+	Funds          int
+	Starting_funds int
+	Weather        string
 }
 
 func ParseMapState(game Game) {
-	//read through map_state string to find first {
-	/*index := 0
-	for i := 0; i < len(game.Awmap.Map_state); i++ {
-		if game.Awmap.Map_state[i] == '{' {
-			index = i
-			break
-		}
-		}*/
-
 	// Split the rest of the string by ;
 	// The resulting fields will have the following format
 	// [data type]:[size (not for ints)]:data
 	// Ex: s:5:"hello" -> string:5:"hello"
 	//
-	// A line in the map file is then nested
-	// AWBWGame
-	// - Game Information - ends at buildings below
+	// The contents of the map state include
+	// - awbwGame
+	//   - Game Information like weather and funds
 	// - Player info (CO, etc) - s:7:"players"
 	//   - contains entries awbwPlayer
 	// - Buildings - s:9:"buildings"
 	//   - contains entries of "awbwBuilding"
 	// - units - s:5:"units"
 	//   - contains entries of "awbwUnit"
-	//
-	// So, could get substrings for the four categories above and parse individually
-	// Or, could parse by ; to get entries as below. Then, split by {, }, and finally :.
-	// After all of that splitting, can look for keywords. Maybe break up into functions
-	// for map info, players, buildings, and units.
 	entries := strings.FieldsFunc(game.Awmap.Map_state, Split)
 	for i := 0; i < len(entries); i++ {
-		fmt.Printf("%s\n", entries[i])
 		vals := strings.Split(entries[i], ":")
-		//fmt.Printf("%s %s\n", vals, vals[len(vals)-1])
-		if vals[len(vals)-1] == "\"awbwPlayer\"" {
-			break
+		if vals[len(vals)-1] == "\"weather_type\"" {
+			i += 1 //increment to get data after identifying weather_type
+			game.Weather = ParseString(entries[i])
+		} else if vals[len(vals)-1] == "\"day\"" {
+			i += 1 //increment to get data after identifying weather_type
+			game.Day = ParseInt(entries[i])
 		}
+	}
+	fmt.Printf("%d %s\n", game.Day, game.Weather)
+}
+
+/*
+Takes in a string of format [data type]:[size]:[data].
+Ex of entry: s:5:"hello". Returns string: hello.
+*/
+func ParseString(entry string) string {
+	vals := strings.Split(entry, ":")
+	final := string(vals[len(vals)-1])
+	return final[1 : len(final)-1]
+}
+
+/*
+Counterpart to ParseString for non-string data
+Ex of entry: i:1 or a:1. Both return 1.
+*/
+func ParseInt(entry string) int {
+	vals := strings.Split(entry, ":")
+	out, err := strconv.Atoi(vals[len(vals)-1])
+	if err != nil {
+		return -10000000
+	} else {
+		return out
 	}
 }
 
 func Split(r rune) bool {
-	return r == ':' || r == '{' || r == '}' || r == ';'
+	return r == '{' || r == '}' || r == ';'
 }
