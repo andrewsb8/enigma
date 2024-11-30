@@ -84,9 +84,12 @@ func ParseMapState(game Game) {
 		} else if vals[len(vals)-1] == "\"players\"" {
 			i += 1
 			game.Num_players = ParseInt(entries[i])
+		} else if vals[len(vals)-1] == "\"starting_funds\"" {
+			i += 1
+			game.Starting_funds = ParseInt(entries[i])
 		}
 	}
-	fmt.Printf("%d %d %s\n", game.Num_players, game.Day, game.Weather)
+	fmt.Printf("%d %d %d %s\n", game.Num_players, game.Starting_funds, game.Day, game.Weather)
 }
 
 /*
@@ -96,7 +99,7 @@ Ex of entry: s:5:"hello". Returns string: hello.
 func ParseString(entry string) string {
 	vals := strings.Split(entry, ":")
 	final := string(vals[len(vals)-1])
-	return final[1 : len(final)-1]
+	return final[1 : len(final)-1] //remove quotations from string
 }
 
 /*
@@ -115,7 +118,6 @@ func ParseInt(entry string) int {
 	}
 	out, err := strconv.Atoi(vals[len(vals)-conversion_index])
 	if err != nil {
-		fmt.Printf("%s\n", err)
 		return -10000000
 	} else {
 		return out
