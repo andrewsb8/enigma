@@ -48,6 +48,7 @@ type Map struct {
 
 type Game struct {
 	Awmap          Map
+	Num_players    int
 	Players        []*Player
 	Day            int
 	Fog            bool
@@ -57,7 +58,7 @@ type Game struct {
 }
 
 func ParseMapState(game Game) {
-	// Split the rest of the string by ;
+	// Split the string by ;, {, and }
 	// The resulting fields will have the following format
 	// [data type]:[size (not for ints)]:data
 	// Ex: s:5:"hello" -> string:5:"hello"
@@ -75,14 +76,17 @@ func ParseMapState(game Game) {
 	for i := 0; i < len(entries); i++ {
 		vals := strings.Split(entries[i], ":")
 		if vals[len(vals)-1] == "\"weather_type\"" {
-			i += 1 //increment to get data after identifying weather_type
+			i += 1 //increment to get data in next line
 			game.Weather = ParseString(entries[i])
 		} else if vals[len(vals)-1] == "\"day\"" {
-			i += 1 //increment to get data after identifying weather_type
+			i += 1
 			game.Day = ParseInt(entries[i])
+		} else if vals[len(vals)-1] == "\"players\"" {
+			i += 1
+			game.Num_players = ParseInt(entries[i])
 		}
 	}
-	fmt.Printf("%d %s\n", game.Day, game.Weather)
+	fmt.Printf("%d %d %s\n", game.Num_players, game.Day, game.Weather)
 }
 
 /*
@@ -101,8 +105,17 @@ Ex of entry: i:1 or a:1. Both return 1.
 */
 func ParseInt(entry string) int {
 	vals := strings.Split(entry, ":")
-	out, err := strconv.Atoi(vals[len(vals)-1])
+	conversion_index := 1
+	// entries starting with "a" look like this before
+	// splitting: a:2:, resulting in a 3rd member of the list
+	// which is just an empty string, "". Below accounts for
+	// this
+	if vals[0] == "a" {
+		conversion_index = 2
+	}
+	out, err := strconv.Atoi(vals[len(vals)-conversion_index])
 	if err != nil {
+		fmt.Printf("%s\n", err)
 		return -10000000
 	} else {
 		return out
