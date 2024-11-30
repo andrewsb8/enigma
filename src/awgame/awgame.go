@@ -6,8 +6,12 @@ import (
 )
 
 type Player struct {
-	Funds int
-	Units []*Unit
+	Funds                 int
+	Units                 []*Unit
+	Army_value            int
+	Income                int
+	Num_income_properties int
+	Num_properties        int //including labs and comm towers
 }
 
 type Unit struct {
@@ -24,7 +28,7 @@ type Unit struct {
 }
 
 type Tile struct {
-	Building_id   int
+	Terrain_id    int
 	Terrain_type  string
 	Can_capture   bool
 	Capture_value int
@@ -47,7 +51,7 @@ type Game struct {
 	Players []*Player
 }
 
-func ParseMap(game Game) {
+func ParseMapState(game Game) {
 	//read through map_state string to find first {
 	index := 0
 	for i := 0; i < len(game.Awmap.Map_state); i++ {
@@ -65,16 +69,23 @@ func ParseMap(game Game) {
 	// A line in the map file is then nested
 	// AWBWGame
 	// - Game Information - ends at buildings below
+	// - Player info (CO, etc) - s:7:"players"
+	//   - contains entries awbwPlayer
 	// - Buildings - }}s:9:"buildings"
 	//   - contains entries of awbwBuilding
 	// - units - }}s:5:"units
 	//   - contains entries of awbwUnit
+	//
+	// So, could get substrings for the four categories above and parse individually
+	// Or, could parse by ; to get entries as below. Then, split by {, }, and finally :.
+	// After all of that splitting, can look for keywords. Maybe break up into functions
+	// for map info, players, buildings, and units.
 	entries := strings.Split(game.Awmap.Map_state[index:len(game.Awmap.Map_state)-1], ";")
 	for i := 0; i < len(entries); i++ {
 		fmt.Printf("%s\n", entries[i])
 		vals := strings.Split(entries[i], ":")
 		//fmt.Printf("%s %s\n", vals, vals[len(vals)-1])
-		if vals[len(vals)-1] == "\"buildings\"" {
+		if vals[len(vals)-1] == "\"awbwBuilding\"" {
 			break
 		}
 	}
