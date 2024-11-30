@@ -53,13 +53,13 @@ type Game struct {
 
 func ParseMapState(game Game) {
 	//read through map_state string to find first {
-	index := 0
+	/*index := 0
 	for i := 0; i < len(game.Awmap.Map_state); i++ {
 		if game.Awmap.Map_state[i] == '{' {
 			index = i
 			break
 		}
-	}
+		}*/
 
 	// Split the rest of the string by ;
 	// The resulting fields will have the following format
@@ -71,22 +71,26 @@ func ParseMapState(game Game) {
 	// - Game Information - ends at buildings below
 	// - Player info (CO, etc) - s:7:"players"
 	//   - contains entries awbwPlayer
-	// - Buildings - }}s:9:"buildings"
-	//   - contains entries of awbwBuilding
-	// - units - }}s:5:"units
-	//   - contains entries of awbwUnit
+	// - Buildings - s:9:"buildings"
+	//   - contains entries of "awbwBuilding"
+	// - units - s:5:"units"
+	//   - contains entries of "awbwUnit"
 	//
 	// So, could get substrings for the four categories above and parse individually
 	// Or, could parse by ; to get entries as below. Then, split by {, }, and finally :.
 	// After all of that splitting, can look for keywords. Maybe break up into functions
 	// for map info, players, buildings, and units.
-	entries := strings.Split(game.Awmap.Map_state[index:len(game.Awmap.Map_state)-1], ";")
+	entries := strings.FieldsFunc(game.Awmap.Map_state, Split)
 	for i := 0; i < len(entries); i++ {
 		fmt.Printf("%s\n", entries[i])
 		vals := strings.Split(entries[i], ":")
 		//fmt.Printf("%s %s\n", vals, vals[len(vals)-1])
-		if vals[len(vals)-1] == "\"awbwBuilding\"" {
+		if vals[len(vals)-1] == "\"awbwPlayer\"" {
 			break
 		}
 	}
+}
+
+func Split(r rune) bool {
+	return r == ':' || r == '{' || r == '}' || r == ';'
 }
