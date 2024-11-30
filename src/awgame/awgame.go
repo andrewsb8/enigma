@@ -73,6 +73,16 @@ func ParseMapState(game Game) {
 	// - units - s:5:"units"
 	//   - contains entries of "awbwUnit"
 	entries := strings.FieldsFunc(game.Awmap.Map_state, Split)
+
+	// going to split up entries array into constituent arrays for
+	// the categories of map information, player information,
+	// unit information, building information. Then can have
+	// individual methods for handling each to avoid one long
+	// else if loop. Just need to count how long each section is
+	// Might have a method to return these sections. Can start with
+	// starting point and ending point. Empty string at either of
+	// function refer to beginning or end.
+
 	for i := 0; i < len(entries); i++ {
 		vals := strings.Split(entries[i], ":")
 		if vals[len(vals)-1] == "\"weather_type\"" {
@@ -90,6 +100,22 @@ func ParseMapState(game Game) {
 		}
 	}
 	fmt.Printf("%d %d %d %s\n", game.Num_players, game.Starting_funds, game.Day, game.Weather)
+}
+
+/*
+Take in an array of strings. Each entry has format
+[data type]:[size (optional)]:[data]. begin and end
+specify the [data] entries to search for. Return subset
+of input array starting with entry containing begin and
+entry containing end.
+*/
+func SpliceArray(list []string, begin string, end string) []string {
+	// if begin is "", begin index is 0
+	// if end is "", end index is len(list)-1
+	// otherwise, the indices have to be found
+	for i := 0; i < len(list); i++ {
+
+	}
 }
 
 /*
