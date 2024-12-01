@@ -1,7 +1,6 @@
 package awgame
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -94,12 +93,15 @@ func ParseMapInfo(list []string, game *Game) {
 		if val == "weather_type" {
 			i += 1 //increment to get data in next line
 			game.Weather = ParseString(list[i])
+			continue
 		} else if val == "day" {
 			i += 1
 			game.Day = ParseInt(list[i])
+			continue
 		} else if val == "starting_funds" {
 			i += 1
 			game.Starting_funds = ParseInt(list[i])
+			continue
 		}
 	}
 }
@@ -116,9 +118,10 @@ func ParsePlayerInfo(list []string, game *Game) {
 		val := ParseString(list[i])
 		if val == "awbwPlayer" {
 			game.Players = append(game.Players, &Player{})
+			continue
 		}
 	}
-	fmt.Printf("%d %d\n", game.Num_players, len(game.Players))
+	//fmt.Printf("%d %d\n", game.Num_players, len(game.Players))
 }
 
 /*
