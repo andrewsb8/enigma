@@ -57,7 +57,7 @@ type Game struct {
 	Weather        string
 }
 
-func ParseMapState(game Game) {
+func ParseMapState(game *Game) {
 	// Split the string by ;, {, and }
 	// The resulting fields will have the following format
 	// [data type]:[size (not for ints)]:data
@@ -78,28 +78,46 @@ func ParseMapState(game Game) {
 	// the categories of map information, player information,
 	// unit information, building information. Then can have
 	// individual methods for handling each to avoid one long
-	// else if loop. Just need to count how long each section is
-	// Might have a method to return these sections. Can start with
-	// starting point and ending point. Empty string at either of
-	// function refer to beginning or end.
+	// else if loop.
+	map_info := SpliceArray(entries, "", "players")
+	ParseMapInfo(map_info, game)
+	player_info := SpliceArray(entries, "players", "buildings")
+	ParsePlayerInfo(player_info, game)
+	//building_info := SpliceArray(entries, "buildings", "units")
+	//unit_info := SpliceArray(entries, "units", "")
 
-	for i := 0; i < len(entries); i++ {
-		vals := strings.Split(entries[i], ":")
-		if vals[len(vals)-1] == "\"weather_type\"" {
+}
+
+func ParseMapInfo(list []string, game *Game) {
+	// skip first entry which is this: [O 8 "awbwGame" 36 ]
+	// for some reason this breaks what I've written.
+	// Other sections will not have this problem
+	for i := 1; i < len(list); i++ {
+		val := ParseString(list[i])
+		if val == "weather_type" {
 			i += 1 //increment to get data in next line
-			game.Weather = ParseString(entries[i])
-		} else if vals[len(vals)-1] == "\"day\"" {
+			game.Weather = ParseString(list[i])
+		} else if val == "day" {
 			i += 1
-			game.Day = ParseInt(entries[i])
-		} else if vals[len(vals)-1] == "\"players\"" {
+			game.Day = ParseInt(list[i])
+		} else if val == "starting_funds" {
 			i += 1
-			game.Num_players = ParseInt(entries[i])
-		} else if vals[len(vals)-1] == "\"starting_funds\"" {
-			i += 1
-			game.Starting_funds = ParseInt(entries[i])
+			game.Starting_funds = ParseInt(list[i])
 		}
 	}
-	fmt.Printf("%d %d %d %s\n", game.Num_players, game.Starting_funds, game.Day, game.Weather)
+}
+
+func ParsePlayerInfo(list []string, game *Game) {
+	// by design first two entries of list are
+	// s:9:"players" and a:[number of players]:.
+	// So can just directly parse this info before
+	// looping
+	game.Num_players = ParseInt(list[1])
+
+	// loop through rest of list
+	for i := 2; i < len(list); i++ {
+		fmt.Printf("")
+	}
 }
 
 /*
@@ -110,12 +128,31 @@ of input array starting with entry containing begin and
 entry containing end.
 */
 func SpliceArray(list []string, begin string, end string) []string {
-	// if begin is "", begin index is 0
-	// if end is "", end index is len(list)-1
-	// otherwise, the indices have to be found
-	for i := 0; i < len(list); i++ {
-
+	begin_index := -1
+	end_index := -1
+	if begin == "" {
+		begin_index = 0
 	}
+	if end == "" {
+		end_index = len(list) - 1
+	}
+
+	// only search through string if one or both indices
+	// are not determined from above conditionals
+	if begin_index == -1 || end_index == -1 {
+		// skip first entry which is this: [O 8 "awbwGame" 36 ]
+		// for some reason this breaks what I've written
+		for i := 1; i < len(list); i++ {
+			val := ParseString(list[i])
+			if begin_index == -1 && val == begin {
+				begin_index = i
+			} else if end_index == -1 && val == end {
+				end_index = i
+				break //can stop iterating if found the end
+			}
+		}
+	}
+	return list[begin_index:end_index]
 }
 
 /*
@@ -124,8 +161,11 @@ Ex of entry: s:5:"hello". Returns string: hello.
 */
 func ParseString(entry string) string {
 	vals := strings.Split(entry, ":")
-	final := string(vals[len(vals)-1])
-	return final[1 : len(final)-1] //remove quotations from string
+	final := vals[len(vals)-1]
+	if final != "" && final[0] == '"' {
+		final = final[1 : len(final)-1] //remove quotations from string
+	}
+	return final
 }
 
 /*
