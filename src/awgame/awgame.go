@@ -1,11 +1,14 @@
 package awgame
 
 import (
+	"fmt"
+	"log"
 	"strconv"
 	"strings"
 )
 
 type Player struct {
+	Id                    int
 	Funds                 int
 	Units                 []*Unit
 	Army_value            int
@@ -15,8 +18,8 @@ type Player struct {
 }
 
 type Unit struct {
-	Unit_id      int
-	Unit_type    string
+	Id           int
+	Type         string
 	Movement     int
 	Vision       int
 	X_position   int
@@ -119,9 +122,18 @@ func ParsePlayerInfo(list []string, game *Game) {
 		if val == "awbwPlayer" {
 			game.Players = append(game.Players, &Player{})
 			continue
+		} else if val == "id" {
+			i += 1
+			game.Players[len(game.Players)-1].Id = ParseInt(list[i])
+		} else if val == "funds" {
+			i += 1
+			game.Players[len(game.Players)-1].Funds = ParseInt(list[i])
 		}
 	}
-	//fmt.Printf("%d %d\n", game.Num_players, len(game.Players))
+	fmt.Printf("%d %d\n", game.Players[0].Funds, game.Players[1].Funds)
+	if game.Num_players != len(game.Players) {
+		log.Fatal("Number of \"players\" does not match number of \"awbwPlayers\". Please check your input file.")
+	}
 }
 
 /*
