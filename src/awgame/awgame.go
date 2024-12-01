@@ -89,10 +89,7 @@ func ParseMapState(game *Game) {
 }
 
 func ParseMapInfo(list []string, game *Game) {
-	// skip first entry which is this: [O 8 "awbwGame" 36 ]
-	// for some reason this breaks what I've written.
-	// Other sections will not have this problem
-	for i := 1; i < len(list); i++ {
+	for i := 0; i < len(list); i++ {
 		val := ParseString(list[i])
 		if val == "weather_type" {
 			i += 1 //increment to get data in next line
@@ -109,15 +106,19 @@ func ParseMapInfo(list []string, game *Game) {
 
 func ParsePlayerInfo(list []string, game *Game) {
 	// by design first two entries of list are
-	// s:9:"players" and a:[number of players]:.
+	// s:9:"players" and a:[number of players]: .
 	// So can just directly parse this info before
 	// looping
 	game.Num_players = ParseInt(list[1])
 
 	// loop through rest of list
 	for i := 2; i < len(list); i++ {
-		fmt.Printf("")
+		val := ParseString(list[i])
+		if val == "awbwPlayer" {
+			game.Players = append(game.Players, &Player{})
+		}
 	}
+	fmt.Printf("%d %d\n", game.Num_players, len(game.Players))
 }
 
 /*
@@ -161,9 +162,25 @@ Ex of entry: s:5:"hello". Returns string: hello.
 */
 func ParseString(entry string) string {
 	vals := strings.Split(entry, ":")
-	final := vals[len(vals)-1]
+	len_vals := len(vals)
+	var final string
+	if len_vals < 4 {
+		// this condition covers data
+		// Exs: s:5:"hello", a:2:, i:50
+		final = vals[len_vals-1]
+
+	} else {
+		// this condition covers the other cases
+		// Exs: O:8:"awbwGame":36:,
+		// i:0;O:10:"awbwPlayer":30:,
+		// i:0;O:8:"awbwUnit":25:,
+		// i:33;O:12:"awbwBuilding":8:
+		final = vals[len_vals-3]
+	}
 	if final != "" && final[0] == '"' {
-		final = final[1 : len(final)-1] //remove quotations from string
+		// remove quotations from string.
+		// Ex: "Clear" -> Clear
+		final = final[1 : len(final)-1]
 	}
 	return final
 }
