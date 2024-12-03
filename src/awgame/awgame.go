@@ -104,7 +104,13 @@ func ParseTerrain(terrain []string, game *Game) {
 			game.Awmap.Tiles[i] = append(game.Awmap.Tiles[i], &Tile{})
 			switch row[j] {
 			case "34":
-				fmt.Print("yeet\n")
+				game.Awmap.Tiles[i][j].Terrain_id = 34
+				game.Awmap.Tiles[i][j].Terrain_type = "city"
+				game.Awmap.Tiles[i][j].Can_capture = true
+			case "1": // plain
+				game.Awmap.Tiles[i][j].Terrain_id = 1
+				game.Awmap.Tiles[i][j].Terrain_type = "plain"
+				game.Awmap.Tiles[i][j].Can_capture = false
 			default:
 				fmt.Print("damn\n")
 			}
