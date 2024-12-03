@@ -37,15 +37,15 @@ type Tile struct {
 	Capture_value int
 	X_location    int
 	Y_location    int
+	// locations might be redundant. positions will be captured by indices
 }
 
 type Map struct {
-	Map_state   string
 	Map_width   int
 	Map_height  int
 	Num_players int
 	Has_hq      bool
-	Tiles       []*Tile
+	Tiles       [][]*Tile
 }
 
 type Game struct {
@@ -54,13 +54,14 @@ type Game struct {
 	Players        []*Player
 	Day            int
 	Fog            bool
-	Funds          int
 	Starting_funds int
 	Weather        string
 }
 
-func ParseMapState(game *Game) {
-	// Split the string by ;, {, and }
+func ParseMap(map_state string, terrain []string, game *Game) {
+	ParseTerrain(terrain, game)
+
+	// Split the map state string by ;, {, and }
 	// The resulting fields will have the following format
 	// [data type]:[size (not for ints)]:data
 	// Ex: s:5:"hello" -> string:5:"hello"
@@ -74,7 +75,7 @@ func ParseMapState(game *Game) {
 	//   - contains entries of "awbwBuilding"
 	// - units - s:5:"units"
 	//   - contains entries of "awbwUnit"
-	entries := strings.FieldsFunc(game.Awmap.Map_state, Split)
+	entries := strings.FieldsFunc(map_state, Split)
 
 	// going to split up entries array into constituent arrays for
 	// the categories of map information, player information,
@@ -88,6 +89,28 @@ func ParseMapState(game *Game) {
 	//building_info := SpliceArray(entries, "buildings", "units")
 	//unit_info := SpliceArray(entries, "units", "")
 
+}
+
+func ParseTerrain(terrain []string, game *Game) {
+	// terrain file ends with empty line, so -1
+	game.Awmap.Map_height = len(terrain) - 1
+	for i := 0; i < game.Awmap.Map_height; i++ {
+		game.Awmap.Tiles = append(game.Awmap.Tiles, []*Tile{})
+		row := strings.Split(terrain[i], ",")
+		if i == 0 {
+			game.Awmap.Map_width = len(row)
+		}
+		for j := 0; j < len(row); j++ {
+			game.Awmap.Tiles[i] = append(game.Awmap.Tiles[i], &Tile{})
+			switch row[j] {
+			case "34":
+				fmt.Print("yeet\n")
+			default:
+				fmt.Print("damn\n")
+			}
+		}
+	}
+	fmt.Print(len(game.Awmap.Tiles[13]), "\n")
 }
 
 func ParseMapInfo(list []string, game *Game) {
@@ -125,15 +148,20 @@ func ParsePlayerInfo(list []string, game *Game) {
 		} else if val == "id" {
 			i += 1
 			game.Players[len(game.Players)-1].Id = ParseInt(list[i])
+			continue
 		} else if val == "funds" {
 			i += 1
 			game.Players[len(game.Players)-1].Funds = ParseInt(list[i])
+			continue
 		}
 	}
-	fmt.Printf("%d %d\n", game.Players[0].Funds, game.Players[1].Funds)
 	if game.Num_players != len(game.Players) {
 		log.Fatal("Number of \"players\" does not match number of \"awbwPlayers\". Please check your input file.")
 	}
+}
+
+func ParseBuidlingInfo(list []string, game *Game) {
+
 }
 
 /*

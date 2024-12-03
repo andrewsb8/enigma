@@ -5,9 +5,9 @@ import (
 	"enigma/src/awio"
 )
 
-func Play(map_file string) {
+func Play(map_file string, terrain_file string) {
 	map_state := awio.GetMapState(map_file)
+	terrain := awio.GetTerrain(terrain_file)
 	game := awgame.Game{}
-	game.Awmap.Map_state = map_state
-	awgame.ParseMapState(&game)
+	awgame.ParseMap(map_state, terrain, &game)
 }

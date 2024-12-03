@@ -6,11 +6,11 @@ import (
 	"strings"
 )
 
+/*
+Reads map file from AWBW and returns the final line
+of data as a string to be parsed.
+*/
 func GetMapState(map_file string) string {
-	/*
-	 Reads map file from AWBW and returns the final line
-	 of data as a string to be parsed.
-	*/
 	data, err := os.ReadFile(map_file)
 	if err != nil {
 		log.Fatal(err)
@@ -20,4 +20,14 @@ func GetMapState(map_file string) string {
 		return lines[len(lines)-2]
 	}
 	return "" //would like to remove this
+}
+
+func GetTerrain(terrain_file string) []string {
+	data, err := os.ReadFile(terrain_file)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		return strings.Split(string(data), "\n")
+	}
+	return []string{} //would like to remove this
 }
