@@ -22,6 +22,13 @@ func GetMapState(map_file string) string {
 	return "" //would like to remove this
 }
 
+/*
+Takes in a string which are rows of comma-separated
+integers. If a map is m columns and n rows, there are
+m comma-separated numbers before a \n is found. Output
+is an array of n strings with m comma-separated numbers
+to be further parsed.
+*/
 func GetTerrain(terrain_file string) []string {
 	data, err := os.ReadFile(terrain_file)
 	if err != nil {
