@@ -4,6 +4,7 @@ type Player struct {
 	Id                    int
 	Funds                 int
 	Units                 []*Unit
+	Building_IDs          []int
 	Army_value            int
 	Income                int
 	Num_income_properties int
@@ -27,7 +28,7 @@ type Tile struct {
 	Terrain_id    int
 	Terrain_type  string
 	Defense_stars int
-	Movement_cost int
+	Movement_cost int // may need to be []int. Ex: mountains cost 2 for infantry and 1 for mech and air, infinite for everything else
 	Can_capture   bool
 	Capture_value int
 	X_location    int

@@ -84,7 +84,10 @@ func ParsePlayerInfo(list []string, game *Game) {
 }
 
 func ParseBuidlingInfo(list []string, game *Game) {
-
+	// need to do two things:
+	// - establish which ids are for which captured buildings
+	//   - the terrain id is related to the HQ. So if HQ id is 54, base looks like 51.
+	// - need to figure out which player to assign the buildings to
 }
 
 /*
