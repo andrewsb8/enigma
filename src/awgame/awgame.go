@@ -26,6 +26,8 @@ type Unit struct {
 type Tile struct {
 	Terrain_id    int
 	Terrain_type  string
+	Defense_stars int
+	Movement_cost int
 	Can_capture   bool
 	Capture_value int
 	X_location    int
