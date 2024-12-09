@@ -4,7 +4,7 @@ type Player struct {
 	Id                    int
 	Funds                 int
 	Units                 []*Unit
-	Building_IDs          []int
+	Building_IDs          []int //ids of captured buildings
 	Army_value            int
 	Income                int
 	Num_income_properties int
@@ -12,12 +12,18 @@ type Player struct {
 }
 
 type Unit struct {
-	Id           int
+	// index of movment cost array to search
+	// when computing cost of movement paths
+	// Ex: 0 = foot, 2 = treads
+	Unit_index int
+	// Type_id is id in state/action file
+	Type_id      int
 	Type         string
-	Movement     int
+	Movement     int // total movement
 	Vision       int
 	X_position   int
 	Y_position   int
+	Hit_points   int
 	Ammo         int
 	Gas          int
 	Can_capture  bool
@@ -28,12 +34,12 @@ type Tile struct {
 	Terrain_id    int
 	Terrain_type  string
 	Defense_stars int
-	Movement_cost int // may need to be []int. Ex: mountains cost 2 for infantry and 1 for mech and air, infinite for everything else
-	Can_capture   bool
-	Capture_value int
-	X_location    int
-	Y_location    int
-	// locations might be redundant. positions will be captured by indices
+	// Unit order of below array will follow the wiki:
+	// [ foot boot treads tires sea lander air pipe ]
+	// if unit cannot move on terrain, gets value of 100
+	Movement_cost  [8]int
+	Can_capture    bool
+	Capture_points int
 }
 
 type Map struct {
@@ -41,7 +47,9 @@ type Map struct {
 	Map_height  int
 	Num_players int
 	Has_hq      bool
-	Tiles       [][]*Tile
+	// indices of Tiles are the
+	// coordinates of the map
+	Tiles [][]*Tile
 }
 
 type Game struct {
