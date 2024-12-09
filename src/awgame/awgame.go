@@ -25,6 +25,7 @@ type Unit struct {
 	Vision       int
 	X_position   int
 	Y_position   int
+	Value        int
 	Hit_points   int
 	Ammo         int
 	Gas          int
