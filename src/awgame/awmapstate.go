@@ -1,6 +1,7 @@
 package awgame
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -33,7 +34,8 @@ func ParseMapState(map_state string, game *Game) {
 	player_info := SpliceArray(entries, "players", "buildings")
 	ParsePlayerInfo(player_info, game)
 	//building_info := SpliceArray(entries, "buildings", "units")
-	//unit_info := SpliceArray(entries, "units", "")
+	unit_info := SpliceArray(entries, "units", "")
+	ParseUnitInfo(unit_info, game)
 }
 
 func ParseMapInfo(list []string, game *Game) {
@@ -94,6 +96,37 @@ func ParseBuidlingInfo(list []string, game *Game) {
 	// - establish which ids are for which captured buildings
 	//   - the terrain id is related to the HQ. So if HQ id is 54, base looks like 51.
 	// - need to figure out which player to assign the buildings to
+	//   - probably can do so based on country code
+	//
+	// Honestly, might not even need this function unless there's weird
+	// building cases. Terrain parsing should be able to handle this if I know
+	// the IDs. The map state file doesn't even provide which id owns the
+	// property. Getting the building ID should help keep track of properties,
+	// though..
+}
+
+func ParseUnitInfo(list []string, game *Game) {
+	var ind int
+	var num_units int
+	for i := 0; i < len(list); i++ {
+		val := ParseString(list[i])
+		// this won't work because player_id comes after unit_id
+		// so I have to store unit id before I know where to put it
+		// (i.e. get the player id). I could change the way I parse
+		// to get all of the information in a section (parse awbwUnit
+		// object) and just look for each individual keyword i want.
+		if val == "players_id" {
+			i += 1
+			ind = GetPlayerIndex(ParseString(list[i]), game.Players)
+			game.Players[ind].Units = append(game.Players[ind].Units, &Unit{})
+			num_units = len(game.Players[ind].Units) - 1
+			continue
+		} else if val == "name" {
+			i += 1
+			game.Players[ind].Units[num_units].Type = ParseString(list[i])
+		}
+	}
+	fmt.Print(len(game.Players[0].Units), len(game.Players[1].Units), "\n")
 }
 
 /*
@@ -184,4 +217,19 @@ func ParseInt(entry string) int {
 
 func Split(r rune) bool {
 	return r == '{' || r == '}' || r == ';'
+}
+
+func GetPlayerIndex(id_string string, players []*Player) int {
+	id, err := strconv.Atoi(id_string)
+	if err != nil {
+		log.Fatal("Non-integer player ID in map state file.")
+	} else {
+		for i := 0; i < len(players); i++ {
+			if id == players[i].Id {
+				return i
+			}
+		}
+		log.Fatal("Player id not found.")
+	}
+	return -1
 }
