@@ -63,19 +63,25 @@ func ParsePlayerInfo(list []string, game *Game) {
 	game.Num_players = ParseInt(list[1])
 
 	// loop through rest of list
+	index := 0
 	for i := 2; i < len(list); i++ {
 		val := ParseString(list[i])
 		if val == "awbwPlayer" {
 			game.Players = append(game.Players, &Player{})
+			index = len(game.Players) - 1
 			continue
 		} else if val == "id" {
 			i += 1
-			game.Players[len(game.Players)-1].Id = ParseInt(list[i])
+			game.Players[index].Id = ParseInt(list[i])
 			continue
 		} else if val == "funds" {
 			i += 1
-			game.Players[len(game.Players)-1].Funds = ParseInt(list[i])
+			game.Players[index].Funds = ParseInt(list[i])
 			continue
+		} else if val == "countries_id" {
+			game.Players[index].Country_id = ParseInt(list[i])
+		} else if val == "co_id" {
+			game.Players[index].CO_id = ParseInt(list[i])
 		}
 	}
 	if game.Num_players != len(game.Players) {

@@ -2,6 +2,8 @@ package awgame
 
 type Player struct {
 	Id                    int
+	Country_id            int
+	CO_id                 int
 	Funds                 int
 	Units                 []*Unit
 	Building_IDs          []int //ids of captured buildings
@@ -37,9 +39,11 @@ type Tile struct {
 	// Unit order of below array will follow the wiki:
 	// [ foot boot treads tires sea lander air pipe ]
 	// if unit cannot move on terrain, gets value of 100
-	Movement_cost  [8]int
-	Can_capture    bool
-	Capture_points int
+	Movement_cost_clear [8]int
+	Movement_cost_rain  [8]int
+	Movement_cost_snow  [8]int
+	Can_capture         bool
+	Capture_points      int
 }
 
 type Map struct {
@@ -47,8 +51,7 @@ type Map struct {
 	Map_height  int
 	Num_players int
 	Has_hq      bool
-	// indices of Tiles are the
-	// coordinates of the map
+	// indices of Tiles are the coordinates of the map
 	Tiles [][]*Tile
 }
 
