@@ -14,23 +14,25 @@ type Player struct {
 }
 
 type Unit struct {
+	// Type_id is id in state/action file
+	Unit_id  int
+	Type     string
+	Movement int // total movement
 	// index of movment cost array to search
 	// when computing cost of movement paths
-	// Ex: 0 = foot, 2 = treads
-	Unit_index int
-	// Type_id is id in state/action file
-	Unit_id      int
-	Type         string
-	Movement     int // total movement
-	Vision       int
-	X_position   int
-	Y_position   int
-	Value        int
-	Hit_points   int
-	Ammo         int
-	Gas          int
-	Can_capture  bool
-	Is_capturing bool
+	// Ex: "F" = foot, "B" = boot, "T" = treads, etc
+	// Need a more complete list
+	Movement_type string
+	Vision        int
+	X_position    int
+	Y_position    int
+	Value         int
+	Hit_points    int
+	Ammo          int
+	Fuel          int
+	Fuel_per_turn int
+	Can_capture   bool
+	Is_capturing  bool
 }
 
 type Tile struct {

@@ -124,6 +124,15 @@ func ParseUnitInfo(list []string, game *Game) {
 	var unit_type string
 	var movement int
 	var vision int
+	var fuel int
+	var fuel_per_turn int
+	var ammo int
+	var hit_points int
+	var x_pos int
+	var y_pos int
+
+	var movement_type string
+	var can_capture bool
 	//var num_units int
 
 	counter := 0
@@ -134,10 +143,18 @@ func ParseUnitInfo(list []string, game *Game) {
 				counter += 1
 			} else {
 				game.Players[ind].Units = append(game.Players[ind].Units, &Unit{
-					Type:     unit_type,
-					Unit_id:  unit_id,
-					Movement: movement,
-					Vision:   vision,
+					Type:          unit_type,
+					Unit_id:       unit_id,
+					Movement:      movement,
+					Vision:        vision,
+					Fuel:          fuel,
+					Fuel_per_turn: fuel_per_turn,
+					Ammo:          ammo,
+					Can_capture:   can_capture,
+					Movement_type: movement_type,
+					Hit_points:    hit_points,
+					X_position:    x_pos,
+					Y_position:    y_pos,
 				})
 			}
 			continue
@@ -148,6 +165,13 @@ func ParseUnitInfo(list []string, game *Game) {
 		} else if val == "name" {
 			i += 1
 			unit_type = ParseString(list[i])
+			if unit_type == "Infantry" {
+				can_capture = true
+				movement_type = "F"
+			} else if unit_type == "Mech" {
+				can_capture = true
+				movement_type = "B"
+			}
 			continue
 		} else if val == "id" {
 			i += 1
@@ -156,8 +180,31 @@ func ParseUnitInfo(list []string, game *Game) {
 			continue
 		} else if val == "movement_points" {
 			i += 1
-			// unique id to unit, not unit type
 			movement = ParseInt(list[i])
+			continue
+		} else if val == "fuel" {
+			i += 1
+			fuel = ParseInt(list[i])
+			continue
+		} else if val == "fuel_per_turn" {
+			i += 1
+			fuel_per_turn = ParseInt(list[i])
+			continue
+		} else if val == "ammo" {
+			i += 1
+			ammo = ParseInt(list[i])
+			continue
+		} else if val == "hit_points" {
+			i += 1
+			hit_points = ParseInt(list[i])
+			continue
+		} else if val == "x" {
+			i += 1
+			x_pos = ParseInt(list[i])
+			continue
+		} else if val == "y" {
+			i += 1
+			y_pos = ParseInt(list[i])
 			continue
 		}
 	}
