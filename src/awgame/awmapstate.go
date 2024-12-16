@@ -141,7 +141,7 @@ func ParseUnitInfo(list []string, game *Game) {
 		if val == "awbwUnit" || i == len(list)-1 {
 			if counter == 0 {
 				counter += 1
-			} else {
+			} else if ind > -1 { //only append if values are valid
 				game.Players[ind].Units = append(game.Players[ind].Units, &Unit{
 					Type:          unit_type,
 					Unit_id:       unit_id,
