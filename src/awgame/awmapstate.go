@@ -65,25 +65,38 @@ func ParsePlayerInfo(list []string, game *Game) {
 	game.Num_players = ParseInt(list[1])
 
 	// loop through rest of list
-	index := 0
+	counter := 0
+	var id int
+	var funds int
+	var country_id int
+	var co_id int
+
 	for i := 2; i < len(list); i++ {
 		val := ParseString(list[i])
-		if val == "awbwPlayer" {
-			game.Players = append(game.Players, &Player{})
-			index = len(game.Players) - 1
+		if val == "awbwPlayer" || i == len(list)-1 {
+			if counter == 0 {
+				counter += 1
+			} else {
+				game.Players = append(game.Players, &Player{
+					Id:         id,
+					Funds:      funds,
+					Country_id: country_id,
+					CO_id:      co_id,
+				})
+			}
 			continue
 		} else if val == "id" {
 			i += 1
-			game.Players[index].Id = ParseInt(list[i])
+			id = ParseInt(list[i])
 			continue
 		} else if val == "funds" {
 			i += 1
-			game.Players[index].Funds = ParseInt(list[i])
+			funds = ParseInt(list[i])
 			continue
 		} else if val == "countries_id" {
-			game.Players[index].Country_id = ParseInt(list[i])
+			country_id = ParseInt(list[i])
 		} else if val == "co_id" {
-			game.Players[index].CO_id = ParseInt(list[i])
+			co_id = ParseInt(list[i])
 		}
 	}
 	if game.Num_players != len(game.Players) {
@@ -107,23 +120,45 @@ func ParseBuidlingInfo(list []string, game *Game) {
 
 func ParseUnitInfo(list []string, game *Game) {
 	var ind int
-	var num_units int
+	var unit_id int
+	var unit_type string
+	var movement int
+	var vision int
+	//var num_units int
+
+	counter := 0
 	for i := 0; i < len(list); i++ {
 		val := ParseString(list[i])
-		// this won't work because player_id comes after unit_id
-		// so I have to store unit id before I know where to put it
-		// (i.e. get the player id). I could change the way I parse
-		// to get all of the information in a section (parse awbwUnit
-		// object) and just look for each individual keyword i want.
-		if val == "players_id" {
+		if val == "awbwUnit" || i == len(list)-1 {
+			if counter == 0 {
+				counter += 1
+			} else {
+				game.Players[ind].Units = append(game.Players[ind].Units, &Unit{
+					Type:     unit_type,
+					Unit_id:  unit_id,
+					Movement: movement,
+					Vision:   vision,
+				})
+			}
+			continue
+		} else if val == "players_id" {
 			i += 1
 			ind = GetPlayerIndex(ParseString(list[i]), game.Players)
-			game.Players[ind].Units = append(game.Players[ind].Units, &Unit{})
-			num_units = len(game.Players[ind].Units) - 1
 			continue
 		} else if val == "name" {
 			i += 1
-			game.Players[ind].Units[num_units].Type = ParseString(list[i])
+			unit_type = ParseString(list[i])
+			continue
+		} else if val == "id" {
+			i += 1
+			// unique id to unit, not unit type
+			unit_id = ParseInt(list[i])
+			continue
+		} else if val == "movement_points" {
+			i += 1
+			// unique id to unit, not unit type
+			movement = ParseInt(list[i])
+			continue
 		}
 	}
 	fmt.Print(len(game.Players[0].Units), len(game.Players[1].Units), "\n")

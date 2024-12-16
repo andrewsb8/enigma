@@ -19,7 +19,7 @@ type Unit struct {
 	// Ex: 0 = foot, 2 = treads
 	Unit_index int
 	// Type_id is id in state/action file
-	Type_id      int
+	Unit_id      int
 	Type         string
 	Movement     int // total movement
 	Vision       int
