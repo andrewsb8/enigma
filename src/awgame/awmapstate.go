@@ -1,7 +1,6 @@
 package awgame
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -159,7 +158,6 @@ func ParseUnitInfo(list []string, game *Game) {
 		} else if val == "players_id" {
 			i += 1
 			ind = GetPlayerIndex(ParseString(list[i]), game.Players)
-			continue
 		} else if val == "name" {
 			i += 1
 			unit_type = ParseString(list[i])
@@ -197,7 +195,6 @@ func ParseUnitInfo(list []string, game *Game) {
 			y_pos = ParseInt(list[i])
 		}
 	}
-	fmt.Print(len(game.Players[0].Units), len(game.Players[1].Units), "\n")
 }
 
 /*

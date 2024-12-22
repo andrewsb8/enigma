@@ -45,6 +45,9 @@ type Tile struct {
 	Movement_cost_snow  [8]int
 	Can_capture         bool
 	Capture_points      int
+	// id from state file which will help keep track of
+	// which player has which building
+	Building_id int
 }
 
 type Map struct {

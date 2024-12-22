@@ -23,12 +23,8 @@ func ParseTerrain(terrain []string, game *Game) {
 
 func CreateTile(terrain_id string) *Tile {
 	tile := Tile{}
-	tile.Can_capture = false
-	tile.Capture_points = -1
-	GetTerrainFromID(terrain_id, &tile)
-	if tile.Can_capture {
-		SetCaptureProperties(&tile)
-	}
+	terrain_map := getTerrainTypeMap()
+	GetTerrainFromID(terrain_id, &tile, terrain_map)
 	return &tile
 }
 
@@ -37,7 +33,7 @@ Parse neutral terrain from map file. All of the nations have unique
 codes for their properties once captured. These IDs can be parsed from
 the map state file.
 */
-func GetTerrainFromID(terrain_id string, tile *Tile) {
+func GetTerrainFromID(terrain_id string, tile *Tile, terrain_map map[int]*Tile) {
 	int_id, err := strconv.Atoi(terrain_id)
 	if err != nil {
 		log.Fatal("Invalid terrain id. Check terrain file.")
@@ -45,79 +41,147 @@ func GetTerrainFromID(terrain_id string, tile *Tile) {
 		tile.Terrain_id = int_id
 	}
 
-	if int_id == 1 {
-		tile.Terrain_type = "plain"
-		tile.Defense_stars = 1
-		tile.Movement_cost_clear = [8]int{1, 1, 1, 2, 100, 100, 1, 100}
-	} else if int_id == 2 {
-		tile.Terrain_type = "mountain"
-		tile.Defense_stars = 4
-		tile.Movement_cost_clear = [8]int{2, 1, 100, 100, 100, 100, 1, 100}
-	} else if int_id == 3 {
-		tile.Terrain_type = "woods"
-		tile.Defense_stars = 2
-		tile.Movement_cost_clear = [8]int{1, 1, 2, 3, 100, 100, 1, 100}
-	} else if int_id >= 4 && int_id <= 14 {
-		tile.Terrain_type = "river"
-		tile.Defense_stars = 0
-		tile.Movement_cost_clear = [8]int{2, 1, 100, 100, 100, 100, 1, 100}
+	if int_id >= 4 && int_id <= 14 {
+		// rivers
+		tile = terrain_map[4]
 	} else if int_id >= 15 && int_id <= 27 {
-		tile.Terrain_type = "road"
-		tile.Defense_stars = 0
-		tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 100, 1, 100}
-	} else if int_id == 28 {
-		tile.Terrain_type = "sea"
-		tile.Defense_stars = 1
-		tile.Movement_cost_clear = [8]int{100, 100, 100, 100, 1, 1, 1, 100}
+		// roads
+		tile = terrain_map[15]
 	} else if int_id >= 29 && int_id <= 32 {
-		tile.Terrain_type = "shoals"
-		tile.Defense_stars = 0
-		tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 1, 1, 100}
-	} else if int_id == 33 {
-		tile.Terrain_type = "reefs"
-		tile.Defense_stars = 1
-		tile.Movement_cost_clear = [8]int{100, 100, 100, 100, 2, 2, 1, 100}
+		// shoals
+		tile = terrain_map[29]
 	} else if (int_id >= 101 && int_id <= 110) || int_id == 113 || int_id == 114 {
-		// pipe seems are pipes originally, but plains when broken
-		tile.Terrain_type = "pipe"
-		tile.Defense_stars = 0
-		tile.Movement_cost_clear = [8]int{100, 100, 100, 100, 100, 100, 100, 1}
+		// pipes
+		tile = terrain_map[101]
 	} else if int_id == 111 || int_id == 112 {
-		tile.Terrain_type = "silo"
-		tile.Defense_stars = 3
-		tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 100, 1, 100}
-	} else if int_id == 34 { // these represent neutral properties
-		tile.Terrain_type = "city"
-		tile.Can_capture = true
-	} else if int_id == 35 {
-		tile.Terrain_type = "base"
-		tile.Can_capture = true
-	} else if int_id == 36 {
-		tile.Terrain_type = "airport"
-		tile.Can_capture = true
-	} else if int_id == 37 {
-		tile.Terrain_type = "port"
-		tile.Can_capture = true
-	} else if int_id == 145 {
-		tile.Terrain_type = "lab"
-		tile.Can_capture = true
-	} else if int_id == 133 {
-		tile.Terrain_type = "comm tower"
-		tile.Can_capture = true
+		// silos
+		tile = terrain_map[111]
 	} else {
-		// leave as a placeholder to be changed when
-		// parsing buildings in map state file
-		tile.Terrain_type = "captured property"
-		tile.Can_capture = true
+		// all terrain which only has one id
+		// plain, mountain, sea, reefs
+		tile = terrain_map[int_id]
 	}
 }
 
-func SetCaptureProperties(tile *Tile) {
-	if tile.Terrain_type == "headquarters" {
-		tile.Defense_stars = 4
-	} else {
-		tile.Defense_stars = 3
+/*
+returns a map of Tile types for regular terrain and
+neutral properties. Another map will be made for captured
+buildings
+*/
+func getTerrainTypeMap() map[int]*Tile {
+	terrainMap := map[int]*Tile{
+		1: {
+			Terrain_type:        "plain",
+			Defense_stars:       1,
+			Movement_cost_clear: [8]int{1, 1, 1, 2, 100, 100, 1, 100},
+			Can_capture:         false,
+			Capture_points:      -1,
+		},
+		2: {
+			Terrain_type:        "mountain",
+			Defense_stars:       4,
+			Movement_cost_clear: [8]int{2, 1, 100, 100, 100, 100, 1, 100},
+			Can_capture:         false,
+			Capture_points:      -1,
+		},
+		3: {
+			Terrain_type:        "woods",
+			Defense_stars:       2,
+			Movement_cost_clear: [8]int{1, 1, 2, 3, 100, 100, 1, 100},
+			Can_capture:         false,
+			Capture_points:      -1,
+		},
+		4: {
+			Terrain_type:        "river",
+			Defense_stars:       0,
+			Movement_cost_clear: [8]int{2, 1, 100, 100, 100, 100, 1, 100},
+			Can_capture:         false,
+			Capture_points:      -1,
+		},
+		15: {
+			Terrain_type:        "road",
+			Defense_stars:       0,
+			Movement_cost_clear: [8]int{1, 1, 1, 1, 100, 100, 1, 100},
+			Can_capture:         false,
+			Capture_points:      -1,
+		},
+		28: {
+			Terrain_type:        "sea",
+			Defense_stars:       1,
+			Movement_cost_clear: [8]int{100, 100, 100, 100, 1, 1, 1, 100},
+			Can_capture:         false,
+			Capture_points:      -1,
+		},
+		29: {
+			Terrain_type:        "shoals",
+			Defense_stars:       0,
+			Movement_cost_clear: [8]int{1, 1, 1, 1, 100, 1, 1, 100},
+			Can_capture:         false,
+			Capture_points:      -1,
+		},
+		33: {
+			Terrain_type:        "reefs",
+			Defense_stars:       1,
+			Movement_cost_clear: [8]int{100, 100, 100, 100, 2, 2, 1, 100},
+			Can_capture:         false,
+			Capture_points:      -1,
+		},
+		101: {
+			Terrain_type:        "pipe",
+			Defense_stars:       0,
+			Movement_cost_clear: [8]int{100, 100, 100, 100, 100, 100, 100, 1},
+			Can_capture:         false,
+			Capture_points:      -1,
+		},
+		111: {
+			Terrain_type:        "silo",
+			Defense_stars:       3,
+			Movement_cost_clear: [8]int{1, 1, 1, 1, 100, 100, 1, 100},
+			Can_capture:         false,
+			Capture_points:      -1,
+		},
+		34: {
+			Terrain_type:        "city",
+			Defense_stars:       3,
+			Movement_cost_clear: [8]int{1, 1, 1, 1, 100, 100, 1, 100},
+			Can_capture:         true,
+			Capture_points:      20,
+		},
+		35: {
+			Terrain_type:        "base",
+			Defense_stars:       3,
+			Movement_cost_clear: [8]int{1, 1, 1, 1, 100, 100, 1, 100},
+			Can_capture:         true,
+			Capture_points:      20,
+		},
+		36: {
+			Terrain_type:        "airport",
+			Defense_stars:       3,
+			Movement_cost_clear: [8]int{1, 1, 1, 1, 100, 100, 1, 100},
+			Can_capture:         true,
+			Capture_points:      20,
+		},
+		37: {
+			Terrain_type:        "port",
+			Defense_stars:       3,
+			Movement_cost_clear: [8]int{1, 1, 1, 1, 100, 100, 1, 100},
+			Can_capture:         true,
+			Capture_points:      20,
+		},
+		133: {
+			Terrain_type:        "comm tower",
+			Defense_stars:       3,
+			Movement_cost_clear: [8]int{1, 1, 1, 1, 100, 100, 1, 100},
+			Can_capture:         true,
+			Capture_points:      20,
+		},
+		145: {
+			Terrain_type:        "lab",
+			Defense_stars:       3,
+			Movement_cost_clear: [8]int{1, 1, 1, 1, 100, 100, 1, 100},
+			Can_capture:         true,
+			Capture_points:      20,
+		},
 	}
-	tile.Capture_points = 20
-	tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 100, 1, 100}
+	return terrainMap
 }
