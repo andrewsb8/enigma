@@ -245,7 +245,7 @@ func ParseString(entry string) string {
 	var final string
 	if len_vals < 4 {
 		// this condition covers data
-		// Exs: s:5:"hello", a:2:, i:50
+		// Exs: s:5:"hello"
 		final = vals[len_vals-1]
 
 	} else {
@@ -270,6 +270,8 @@ Ex of entry: i:1 or a:1. Both return 1.
 */
 func ParseInt(entry string) int {
 	vals := strings.Split(entry, ":")
+	// normal integer values have format i:[value]
+	// so need the last value in entry
 	conversion_index := 1
 	// entries starting with "a" look like this before
 	// splitting: a:2:, resulting in a 3rd member of the list
