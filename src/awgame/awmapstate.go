@@ -128,6 +128,7 @@ func ParseUnitInfo(list []string, game *Game) {
 	var hit_points int
 	var x_pos int
 	var y_pos int
+	var value int
 
 	var movement_type int
 	var can_capture bool
@@ -153,6 +154,7 @@ func ParseUnitInfo(list []string, game *Game) {
 					Hit_points:    hit_points,
 					X_position:    x_pos,
 					Y_position:    y_pos,
+					Value:         value,
 				})
 				ind = -1
 			} else {
@@ -196,6 +198,9 @@ func ParseUnitInfo(list []string, game *Game) {
 		} else if val == "y" {
 			i += 1
 			y_pos = ParseInt(list[i])
+		} else if val == "cost" {
+			i += 1
+			value = ParseInt(list[i])
 		}
 	}
 }

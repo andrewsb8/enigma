@@ -31,6 +31,7 @@ type Unit struct {
 	Fuel_per_turn int
 	Can_capture   bool
 	Is_capturing  bool
+	Value         int
 }
 
 type Tile struct {
