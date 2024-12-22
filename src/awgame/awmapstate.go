@@ -44,15 +44,12 @@ func ParseMapInfo(list []string, game *Game) {
 		if val == "weather_type" {
 			i += 1 //increment to get data in next line
 			game.Weather = ParseString(list[i])
-			continue
 		} else if val == "day" {
 			i += 1
 			game.Day = ParseInt(list[i])
-			continue
 		} else if val == "starting_funds" {
 			i += 1
 			game.Starting_funds = ParseInt(list[i])
-			continue
 		}
 	}
 }
@@ -111,11 +108,10 @@ func ParseBuidlingInfo(list []string, game *Game) {
 	// - need to figure out which player to assign the buildings to
 	//   - probably can do so based on country code
 	//
-	// Honestly, might not even need this function unless there's weird
-	// building cases. Terrain parsing should be able to handle this if I know
-	// the IDs. The map state file doesn't even provide which id owns the
-	// property. Getting the building ID should help keep track of properties,
-	// though..
+	// Will need this function for special cases like buildings which are half
+	// captured at the beginning or if I'm loading a map state mid game. It is
+	// very likely training from specific positions will be a very good use case
+	// for this tool
 }
 
 func ParseUnitInfo(list []string, game *Game) {
@@ -131,7 +127,7 @@ func ParseUnitInfo(list []string, game *Game) {
 	var x_pos int
 	var y_pos int
 
-	var movement_type string
+	var movement_type int
 	var can_capture bool
 	//var num_units int
 
@@ -141,7 +137,7 @@ func ParseUnitInfo(list []string, game *Game) {
 		if val == "awbwUnit" || i == len(list)-1 {
 			if counter == 0 {
 				counter += 1
-			} else if ind > -1 { //only append if values are valid
+			} else if ind > -1 { //only append if player id is found
 				game.Players[ind].Units = append(game.Players[ind].Units, &Unit{
 					Type:          unit_type,
 					Unit_id:       unit_id,
@@ -156,8 +152,10 @@ func ParseUnitInfo(list []string, game *Game) {
 					X_position:    x_pos,
 					Y_position:    y_pos,
 				})
+				ind = -1
+			} else {
+				log.Fatal("No or invalid player id found for unit.")
 			}
-			continue
 		} else if val == "players_id" {
 			i += 1
 			ind = GetPlayerIndex(ParseString(list[i]), game.Players)
@@ -167,45 +165,36 @@ func ParseUnitInfo(list []string, game *Game) {
 			unit_type = ParseString(list[i])
 			if unit_type == "Infantry" {
 				can_capture = true
-				movement_type = "F"
+				movement_type = 0
 			} else if unit_type == "Mech" {
 				can_capture = true
-				movement_type = "B"
+				movement_type = 1
 			}
-			continue
 		} else if val == "id" {
 			i += 1
 			// unique id to unit, not unit type
 			unit_id = ParseInt(list[i])
-			continue
 		} else if val == "movement_points" {
 			i += 1
 			movement = ParseInt(list[i])
-			continue
 		} else if val == "fuel" {
 			i += 1
 			fuel = ParseInt(list[i])
-			continue
 		} else if val == "fuel_per_turn" {
 			i += 1
 			fuel_per_turn = ParseInt(list[i])
-			continue
 		} else if val == "ammo" {
 			i += 1
 			ammo = ParseInt(list[i])
-			continue
 		} else if val == "hit_points" {
 			i += 1
 			hit_points = ParseInt(list[i])
-			continue
 		} else if val == "x" {
 			i += 1
 			x_pos = ParseInt(list[i])
-			continue
 		} else if val == "y" {
 			i += 1
 			y_pos = ParseInt(list[i])
-			continue
 		}
 	}
 	fmt.Print(len(game.Players[0].Units), len(game.Players[1].Units), "\n")

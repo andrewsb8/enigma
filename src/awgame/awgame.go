@@ -20,9 +20,7 @@ type Unit struct {
 	Movement int // total movement
 	// index of movment cost array to search
 	// when computing cost of movement paths
-	// Ex: "F" = foot, "B" = boot, "T" = treads, etc
-	// Need a more complete list
-	Movement_type string
+	Movement_type int
 	Vision        int
 	X_position    int
 	Y_position    int

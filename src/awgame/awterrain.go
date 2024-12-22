@@ -26,6 +26,9 @@ func CreateTile(terrain_id string) *Tile {
 	tile.Can_capture = false
 	tile.Capture_points = -1
 	GetTerrainFromID(terrain_id, &tile)
+	if tile.Can_capture {
+		SetCaptureProperties(&tile)
+	}
 	return &tile
 }
 
@@ -37,7 +40,7 @@ the map state file.
 func GetTerrainFromID(terrain_id string, tile *Tile) {
 	int_id, err := strconv.Atoi(terrain_id)
 	if err != nil {
-		log.Fatal("Noninteger terrain id. Check terrain file.")
+		log.Fatal("Invalid terrain id. Check terrain file.")
 	} else {
 		tile.Terrain_id = int_id
 	}
@@ -86,46 +89,35 @@ func GetTerrainFromID(terrain_id string, tile *Tile) {
 	} else if int_id == 34 { // these represent neutral properties
 		tile.Terrain_type = "city"
 		tile.Can_capture = true
-		tile.Defense_stars = 3
-		tile.Capture_points = 20
-		tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 100, 1, 100}
 	} else if int_id == 35 {
 		tile.Terrain_type = "base"
 		tile.Can_capture = true
-		tile.Defense_stars = 3
-		tile.Capture_points = 20
-		tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 100, 1, 100}
 	} else if int_id == 36 {
 		tile.Terrain_type = "airport"
 		tile.Can_capture = true
-		tile.Defense_stars = 3
-		tile.Capture_points = 20
-		tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 100, 1, 100}
 	} else if int_id == 37 {
 		tile.Terrain_type = "port"
 		tile.Can_capture = true
-		tile.Defense_stars = 3
-		tile.Capture_points = 20
-		tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 100, 1, 100}
 	} else if int_id == 145 {
 		tile.Terrain_type = "lab"
 		tile.Can_capture = true
-		tile.Defense_stars = 3
-		tile.Capture_points = 20
-		tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 100, 1, 100}
 	} else if int_id == 133 {
 		tile.Terrain_type = "comm tower"
 		tile.Can_capture = true
-		tile.Defense_stars = 3
-		tile.Capture_points = 20
-		tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 100, 1, 100}
 	} else {
 		// leave as a placeholder to be changed when
 		// parsing buildings in map state file
 		tile.Terrain_type = "captured property"
 		tile.Can_capture = true
-		tile.Defense_stars = 3
-		tile.Capture_points = 20
-		tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 100, 1, 100}
 	}
+}
+
+func SetCaptureProperties(tile *Tile) {
+	if tile.Terrain_type == "headquarters" {
+		tile.Defense_stars = 4
+	} else {
+		tile.Defense_stars = 3
+	}
+	tile.Capture_points = 20
+	tile.Movement_cost_clear = [8]int{1, 1, 1, 1, 100, 100, 1, 100}
 }
