@@ -90,8 +90,10 @@ func ParsePlayerInfo(list []string, game *Game) {
 			funds = ParseInt(list[i])
 			continue
 		} else if val == "countries_id" {
+			i += 1
 			country_id = ParseInt(list[i])
 		} else if val == "co_id" {
+			i += 1
 			co_id = ParseInt(list[i])
 		}
 	}
@@ -100,7 +102,7 @@ func ParsePlayerInfo(list []string, game *Game) {
 	}
 }
 
-func ParseBuidlingInfo(list []string, game *Game) {
+func ParseBuidlingInfo(list []string, game *Game) *Game {
 	// need to do two things:
 	// - establish which ids are for which captured buildings
 	//   - the terrain id is related to the HQ. So if HQ id is 54, base looks like 51.
@@ -111,6 +113,7 @@ func ParseBuidlingInfo(list []string, game *Game) {
 	// captured at the beginning or if I'm loading a map state mid game. It is
 	// very likely training from specific positions will be a very good use case
 	// for this tool
+	return game
 }
 
 func ParseUnitInfo(list []string, game *Game) {

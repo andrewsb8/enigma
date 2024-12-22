@@ -22,9 +22,8 @@ func ParseTerrain(terrain []string, game *Game) {
 }
 
 func CreateTile(terrain_id string) *Tile {
-	tile := Tile{}
 	terrain_map := getTerrainTypeMap()
-	GetTerrainFromID(terrain_id, &tile, terrain_map)
+	tile := *GetTerrainFromID(terrain_id, &Tile{}, terrain_map)
 	return &tile
 }
 
@@ -33,12 +32,10 @@ Parse neutral terrain from map file. All of the nations have unique
 codes for their properties once captured. These IDs can be parsed from
 the map state file.
 */
-func GetTerrainFromID(terrain_id string, tile *Tile, terrain_map map[int]*Tile) {
+func GetTerrainFromID(terrain_id string, tile *Tile, terrain_map map[int]*Tile) *Tile {
 	int_id, err := strconv.Atoi(terrain_id)
 	if err != nil {
 		log.Fatal("Invalid terrain id. Check terrain file.")
-	} else {
-		tile.Terrain_id = int_id
 	}
 
 	if int_id >= 4 && int_id <= 14 {
@@ -56,11 +53,17 @@ func GetTerrainFromID(terrain_id string, tile *Tile, terrain_map map[int]*Tile) 
 	} else if int_id == 111 || int_id == 112 {
 		// silos
 		tile = terrain_map[111]
+	} else if (int_id >= 38 && int_id <= 100) || (int_id >= 117 && int_id <= 194) || (int_id >= 196 && int_id <= 216) {
+		// all captured property ranges
+		// will use different map here
+		tile = &Tile{}
 	} else {
 		// all terrain which only has one id
 		// plain, mountain, sea, reefs
 		tile = terrain_map[int_id]
 	}
+	tile.Terrain_id = int_id
+	return tile
 }
 
 /*
