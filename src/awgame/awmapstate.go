@@ -33,6 +33,7 @@ func ParseMapState(map_state string, game *Game) {
 	player_info := SpliceArray(entries, "players", "buildings")
 	ParsePlayerInfo(player_info, game)
 	//building_info := SpliceArray(entries, "buildings", "units")
+	//ParseBuildingInfo(player_info, game)
 	unit_info := SpliceArray(entries, "units", "")
 	ParseUnitInfo(unit_info, game)
 }
@@ -102,7 +103,7 @@ func ParsePlayerInfo(list []string, game *Game) {
 	}
 }
 
-func ParseBuidlingInfo(list []string, game *Game) *Game {
+func ParseBuidlingInfo(list []string, game *Game) {
 	// need to do two things:
 	// - establish which ids are for which captured buildings
 	//   - the terrain id is related to the HQ. So if HQ id is 54, base looks like 51.
@@ -113,7 +114,6 @@ func ParseBuidlingInfo(list []string, game *Game) *Game {
 	// captured at the beginning or if I'm loading a map state mid game. It is
 	// very likely training from specific positions will be a very good use case
 	// for this tool
-	return game
 }
 
 func ParseUnitInfo(list []string, game *Game) {

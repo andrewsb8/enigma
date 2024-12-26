@@ -63,6 +63,7 @@ type Game struct {
 	Awmap          Map
 	Num_players    int
 	Players        []*Player
+	Country_ids    []*int //list of country ids for easy searching
 	Day            int
 	Fog            bool
 	Starting_funds int
