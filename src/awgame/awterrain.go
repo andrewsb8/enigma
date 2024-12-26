@@ -68,8 +68,7 @@ func GetTerrainFromID(terrain_id string, tile *Tile, terrain_map map[int]*Tile) 
 
 /*
 returns a map of Tile types for regular terrain and
-neutral properties. Another map will be made for captured
-buildings
+neutral properties. int is terrain id
 */
 func getTerrainTypeMap() map[int]*Tile {
 	terrainMap := map[int]*Tile{
