@@ -55,8 +55,7 @@ func GetTerrainFromID(terrain_id string, tile *Tile, terrain_map map[int]*Tile) 
 		tile = terrain_map[111]
 	} else if (int_id >= 38 && int_id <= 100) || (int_id >= 117 && int_id <= 194) || (int_id >= 196 && int_id <= 216) {
 		// all captured property ranges
-		// will use different map here
-		tile = &Tile{}
+		tile = terrain_map[9999]
 	} else {
 		// all terrain which only has one id
 		// plain, mountain, sea, reefs
@@ -183,6 +182,11 @@ func getTerrainTypeMap() map[int]*Tile {
 			Movement_cost_clear: [8]int{1, 1, 1, 1, 100, 100, 1, 100},
 			Can_capture:         true,
 			Capture_points:      20,
+		},
+		9999: {
+			Terrain_type:   "unlabeled captured property",
+			Can_capture:    true,
+			Capture_points: 20,
 		},
 	}
 	return terrainMap

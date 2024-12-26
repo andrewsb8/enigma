@@ -104,16 +104,17 @@ func ParsePlayerInfo(list []string, game *Game) {
 }
 
 func ParseBuidlingInfo(list []string, game *Game) {
-	// need to do two things:
-	// - establish which ids are for which captured buildings
-	//   - the terrain id is related to the HQ. So if HQ id is 54, base looks like 51.
-	// - need to figure out which player to assign the buildings to
-	//   - probably can do so based on country code
-	//
-	// Will need this function for special cases like buildings which are half
-	// captured at the beginning or if I'm loading a map state mid game. It is
-	// very likely training from specific positions will be a very good use case
-	// for this tool
+	// TODO:
+	// - All captured properties should be parsed here
+	// - The only things parsed is the terrain_id, terrain_type
+	// 		is set to "unlabeled captured property", and the capture
+	// 		properties. Things like defense stars needs to be set
+	// 		(can't set ahead of time because of HQ :/)
+	// - Need to get the ids of buildings for each country from
+	// 		GetArmyPropertyMap() and can use game.Country_ids to
+	// 		only return the relevant countries information
+	// - Then need to keep track of which player has which buildings
+	// 		(can use country id)
 }
 
 func ParseUnitInfo(list []string, game *Game) {
