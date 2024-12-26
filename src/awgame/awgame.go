@@ -5,8 +5,9 @@ type Player struct {
 	Country_id            int
 	CO_id                 int
 	Funds                 int
-	Units                 []*Unit // change to map[int]*Unit where int is unit id?
-	Building_IDs          []*int  // ids of captured buildings (change to position tuples for easy lookups?), should I separate into HQ, base, city, etc for ease of decision making?
+	Unit_ids              []*int        //store keys of Units map
+	Units                 map[int]*Unit // map of unit id to Unit structure
+	Building_IDs          []*int        // ids of captured buildings (change to position tuples for easy lookups?), should I separate into HQ, base, city, etc for ease of decision making?
 	Army_value            int
 	Income                int
 	Num_income_properties int

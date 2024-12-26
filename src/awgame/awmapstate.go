@@ -142,7 +142,10 @@ func ParseUnitInfo(list []string, game *Game) {
 			if counter == 0 {
 				counter += 1
 			} else if ind > -1 { //only append if player id is found
-				game.Players[ind].Units = append(game.Players[ind].Units, &Unit{
+				if game.Players[ind].Units == nil {
+					game.Players[ind].Units = make(map[int]*Unit)
+				}
+				game.Players[ind].Units[unit_id] = &Unit{
 					Type:          unit_type,
 					Unit_id:       unit_id,
 					Movement:      movement,
@@ -156,7 +159,8 @@ func ParseUnitInfo(list []string, game *Game) {
 					X_position:    x_pos,
 					Y_position:    y_pos,
 					Value:         value,
-				})
+				}
+				game.Players[ind].Unit_ids = append(game.Players[ind].Unit_ids, &unit_id)
 				ind = -1
 			} else {
 				log.Fatal("No or invalid player id found for unit.")
