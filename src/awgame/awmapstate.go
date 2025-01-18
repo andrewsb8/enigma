@@ -63,6 +63,9 @@ func ParsePlayerInfo(list []string, game *Game) {
 	// looping
 	game.Num_players = ParseInt(list[1])
 
+	// get map for army properties
+	army_map := GetArmyPropertyMap()
+
 	// loop through rest of list
 	counter := 0
 	var id int
@@ -82,6 +85,7 @@ func ParsePlayerInfo(list []string, game *Game) {
 					Country_id: country_id,
 					CO_id:      co_id,
 				})
+				game.Players[len(game.Players)-1].Army_properties = army_map[game.Players[len(game.Players)-1].Country_id]
 			}
 			continue
 		} else if val == "id" {
@@ -106,8 +110,6 @@ func ParsePlayerInfo(list []string, game *Game) {
 }
 
 func ParseBuidlingInfo(list []string, game *Game) {
-	//army_map := GetArmyPropertyMap()
-
 	var x int
 	var y int
 	var t_id int
@@ -121,7 +123,16 @@ func ParseBuidlingInfo(list []string, game *Game) {
 				counter += 1
 			} else { // start parsing info after collecting building properties
 				if game.Awmap.Tiles[y][x].Terrain_type == "unlabeled captured property" {
-					fmt.Println(game.Awmap.Tiles[y][x].Terrain_id, t_id, b_id)
+					for j := 0; j < game.Num_players; j++ {
+						// update Tile for captured properties
+						value, ok := game.Players[j].Army_properties[t_id]
+						if ok {
+							game.Awmap.Tiles[y][x] = value
+						}
+
+						// now want to store buildings info somewhere: building_id, etc
+					}
+					fmt.Println(b_id)
 				}
 				x = -1
 				y = -1

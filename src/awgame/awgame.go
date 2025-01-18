@@ -8,6 +8,7 @@ type Player struct {
 	Unit_ids              []*int        //store keys of Units map
 	Units                 map[int]*Unit // map of unit id to Unit structure
 	Building_ids          []*int        // building ids
+	Army_properties       map[int]*Tile //keep details about captured properties for parsing map and changing info in games
 	Army_value            int
 	Income                int
 	Num_income_properties int
