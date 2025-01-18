@@ -7,7 +7,7 @@ type Player struct {
 	Funds                 int
 	Unit_ids              []*int        //store keys of Units map
 	Units                 map[int]*Unit // map of unit id to Unit structure
-	Building_IDs          []*int        // ids of captured buildings (change to position tuples for easy lookups?), should I separate into HQ, base, city, etc for ease of decision making?
+	Building_ids          []*int        // building ids
 	Army_value            int
 	Income                int
 	Num_income_properties int
@@ -51,6 +51,10 @@ type Tile struct {
 	Building_id int
 }
 
+//type Building struct {
+//
+//}
+
 type Map struct {
 	Map_width   int
 	Map_height  int
@@ -58,13 +62,13 @@ type Map struct {
 	Has_hq      bool
 	// indices of Tiles are the coordinates of the map
 	Tiles [][]*Tile
+	// Buildings map[int]*Building //map ids to buildings?
 }
 
 type Game struct {
 	Awmap          Map
 	Num_players    int
 	Players        []*Player
-	Country_ids    []*int //list of country ids for easy searching
 	Day            int
 	Fog            bool
 	Starting_funds int

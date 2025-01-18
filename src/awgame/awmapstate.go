@@ -1,6 +1,7 @@
 package awgame
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -30,10 +31,11 @@ func ParseMapState(map_state string, game *Game) {
 	// else if loop.
 	map_info := SpliceArray(entries, "", "players")
 	ParseMapInfo(map_info, game)
+	fmt.Println(game.Awmap.Map_height, game.Awmap.Map_width)
 	player_info := SpliceArray(entries, "players", "buildings")
 	ParsePlayerInfo(player_info, game)
-	//building_info := SpliceArray(entries, "buildings", "units")
-	//ParseBuildingInfo(player_info, game)
+	building_info := SpliceArray(entries, "buildings", "units")
+	ParseBuidlingInfo(building_info, game)
 	unit_info := SpliceArray(entries, "units", "")
 	ParseUnitInfo(unit_info, game)
 }
@@ -104,17 +106,42 @@ func ParsePlayerInfo(list []string, game *Game) {
 }
 
 func ParseBuidlingInfo(list []string, game *Game) {
-	// TODO:
-	// - All captured properties should be parsed here
-	// - The only things parsed is the terrain_id, terrain_type
-	// 		is set to "unlabeled captured property", and the capture
-	// 		properties. Things like defense stars needs to be set
-	// 		(can't set ahead of time because of HQ :/)
-	// - Need to get the ids of buildings for each country from
-	// 		GetArmyPropertyMap() and can use game.Country_ids to
-	// 		only return the relevant countries information
-	// - Then need to keep track of which player has which buildings
-	// 		(can use country id)
+	//army_map := GetArmyPropertyMap()
+
+	var x int
+	var y int
+	var t_id int
+	var b_id int
+	counter := 0
+
+	for i := 0; i < len(list); i++ {
+		val := ParseString(list[i])
+		if val == "awbwBuilding" || i == len(list)-1 {
+			if counter == 0 {
+				counter += 1
+			} else { // start parsing info after collecting building properties
+				if game.Awmap.Tiles[y][x].Terrain_type == "unlabeled captured property" {
+					fmt.Println(game.Awmap.Tiles[y][x].Terrain_id, t_id, b_id)
+				}
+				x = -1
+				y = -1
+				t_id = -1
+				b_id = -1
+			}
+		} else if val == "x" {
+			i += 1
+			x = ParseInt(list[i])
+		} else if val == "y" {
+			i += 1
+			y = ParseInt(list[i])
+		} else if val == "terrain_id" {
+			i += 1
+			t_id = ParseInt(list[i])
+		} else if val == "id" {
+			i += 1
+			b_id = ParseInt(list[i])
+		}
+	}
 }
 
 func ParseUnitInfo(list []string, game *Game) {
