@@ -19,6 +19,7 @@ var (
 	map_file     = flag.String("mf", "", "Input file with map state information")
 	action_file  = flag.String("af", "", "Input file with action information")
 	terrain_file = flag.String("tf", "", "Input file with grid of terrain ids")
+	turns        = flag.Int("t", 1, "Number of turns to play")
 )
 
 func main() {
@@ -26,7 +27,7 @@ func main() {
 	flag.Parse()
 
 	if *play {
-		p.Play(*map_file, *terrain_file)
+		p.Play(*map_file, *terrain_file, *turns)
 	} else {
 		usage()
 	}

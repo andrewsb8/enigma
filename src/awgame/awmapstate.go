@@ -1,7 +1,6 @@
 package awgame
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -31,7 +30,6 @@ func ParseMapState(map_state string, game *Game) {
 	// else if loop.
 	map_info := SpliceArray(entries, "", "players")
 	ParseMapInfo(map_info, game)
-	fmt.Println(game.Awmap.Map_height, game.Awmap.Map_width)
 	player_info := SpliceArray(entries, "players", "buildings")
 	ParsePlayerInfo(player_info, game)
 	building_info := SpliceArray(entries, "buildings", "units")
