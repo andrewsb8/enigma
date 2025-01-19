@@ -114,7 +114,12 @@ func ParseBuidlingInfo(list []string, game *Game) {
 	var y int
 	var t_id int
 	var b_id int
+	var cap_points int
 	counter := 0
+
+	if game.Awmap.Buildings == nil {
+		game.Awmap.Buildings = make(map[int]*Building)
+	}
 
 	for i := 0; i < len(list); i++ {
 		val := ParseString(list[i])
@@ -127,17 +132,32 @@ func ParseBuidlingInfo(list []string, game *Game) {
 						// update Tile for captured properties
 						value, ok := game.Players[j].Army_properties[t_id]
 						if ok {
-							game.Awmap.Tiles[y][x] = value
+							game.Awmap.Tiles[y][x] = value // update Tile with captured property info
+							game.Players[j].Building_ids = append(game.Players[j].Building_ids, &b_id)
 						}
 
-						// now want to store buildings info somewhere: building_id, etc
+						game.Awmap.Building_ids = append(game.Awmap.Building_ids, &b_id)
+						game.Awmap.Buildings[b_id] = &Building{
+							Terrain_id:     t_id,
+							X:              x,
+							Y:              y,
+							Capture_points: cap_points,
+						}
 					}
-					fmt.Println(b_id)
+				} else { // all other buildings
+					game.Awmap.Building_ids = append(game.Awmap.Building_ids, &b_id)
+					game.Awmap.Buildings[b_id] = &Building{
+						Terrain_id:     t_id,
+						X:              x,
+						Y:              y,
+						Capture_points: cap_points,
+					}
 				}
 				x = -1
 				y = -1
 				t_id = -1
 				b_id = -1
+				cap_points = -1
 			}
 		} else if val == "x" {
 			i += 1
@@ -151,8 +171,12 @@ func ParseBuidlingInfo(list []string, game *Game) {
 		} else if val == "id" {
 			i += 1
 			b_id = ParseInt(list[i])
+		} else if val == "capture" {
+			i += 1
+			cap_points = ParseInt(list[i])
 		}
 	}
+	game.Awmap.Num_buildings = len(game.Awmap.Building_ids)
 }
 
 func ParseUnitInfo(list []string, game *Game) {

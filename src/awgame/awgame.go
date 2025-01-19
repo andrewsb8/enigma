@@ -7,7 +7,7 @@ type Player struct {
 	Funds                 int
 	Unit_ids              []*int        //store keys of Units map
 	Units                 map[int]*Unit // map of unit id to Unit structure
-	Building_ids          []*int        // building ids
+	Building_ids          []*int        // captured building ids
 	Army_properties       map[int]*Tile //keep details about captured properties for parsing map and changing info in games
 	Army_value            int
 	Income                int
@@ -45,16 +45,14 @@ type Tile struct {
 	Movement_cost_clear [8]int
 	Movement_cost_rain  [8]int
 	Movement_cost_snow  [8]int
-	Can_capture         bool
-	Capture_points      int
-	// id from state file which will help keep track of
-	// which player has which building
-	Building_id int
 }
 
-//type Building struct {
-//
-//}
+type Building struct {
+	Terrain_id     int
+	X              int
+	Y              int
+	Capture_points int
+}
 
 type Map struct {
 	Map_width   int
@@ -62,8 +60,12 @@ type Map struct {
 	Num_players int
 	Has_hq      bool
 	// indices of Tiles are the coordinates of the map
-	Tiles [][]*Tile
-	// Buildings map[int]*Building //map ids to buildings?
+	// x and y are flipped so Tile[5][4] is column 4 (x)
+	// and row 5 (y)
+	Tiles         [][]*Tile
+	Num_buildings int
+	Building_ids  []*int
+	Buildings     map[int]*Building
 }
 
 type Game struct {
