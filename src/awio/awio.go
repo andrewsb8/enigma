@@ -38,3 +38,11 @@ func GetTerrain(terrain_file string) []string {
 	}
 	return []string{} //would like to remove this
 }
+
+func WriteMapState() {
+	return
+}
+
+func WriteActionList() {
+	return
+}
